@@ -17,6 +17,14 @@ jobs:
     - uses: mymindstorm/setup-emsdk@v13
     - name: Verify
       run: emcc -v
+
+    - name: Update Rust
+      run: rustup update beta && rustup default beta
+    - name: Verify Rust
+      run: rustc -v
+
+    - name: Add emscripten to rustc
+      run: rustup target add  wasm32-unknown-emscripten
       
     - uses: actions/checkout@v3
     - name: Build

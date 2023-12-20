@@ -37,7 +37,6 @@ jobs:
     - name: Verify  biowasm
       run: ls -Rl biowasm
     - uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
       with:
        files: biowasm/*
       env:

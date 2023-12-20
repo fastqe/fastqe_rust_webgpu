@@ -32,6 +32,8 @@ jobs:
     - name: Build
       run: cargo build --verbose --target wasm32-unknown-emscripten --release
       
+    - name: Show target outputs 
+      run: ls -R 
     - name: Run tests (TODO)
       run: echo cargo test --verbose
         

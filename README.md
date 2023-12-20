@@ -20,4 +20,6 @@ Example data is located in the `data` folder and is available in the virtual fil
 ```
 Rachael St. Jacques, Max Maza, Sabrina Robertson, Guoqing Lu, Andrew Lonsdale, Ray A Enke (2019). A Fun Introductory Command Line Exercise: Next Generation Sequencing Quality Analysis with Emoji!. NIBLSE Incubator: Intro to Command Line Coding Genomics Analysis, (Version 2.0). QUBES Educational Resources. doi:10.25334/Q4D172
 ```
-git push origin main --tags
+git commit
+git tag v....
+git push  --tags

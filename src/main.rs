@@ -412,7 +412,7 @@ fn main() {
 
  let options = Command::new("fastqe")
         .version("1.0")
-        .about("Read one or more FASTQ files, compute quality stats for each file, print as emoji... for some reason.😄 \n\n🚨 Rust and WebAssembly beta: only command line options with a  ✅  are functional  🚨 \n rustc 1.75.0-beta.7 emcc 3.1.50")
+        .about("Read one or more FASTQ files, compute quality stats for each file, print as emoji... for some reason.😄 \n\n🚨 Rust and WebAssembly beta: only command line options with a  ✅  are functional  \n rustc 1.75.0-beta.7 emcc 3.1.50")
         .arg(Arg::new("FASTQ_FILE")
             .help("Input FASTQ files")
             .num_args(1..))

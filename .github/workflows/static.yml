@@ -1,4 +1,3 @@
-# Simple workflow for deploying static content to GitHub Pages when new release
 name: Deploy static content to Pages
 
 on:   release

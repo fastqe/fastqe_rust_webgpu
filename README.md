@@ -4,6 +4,7 @@
 
 Each release contains the biowasm compatible files: https://github.com/fastqe/fastqe_rust/releases/latest
 
+Files are hosted at:
 
 ## Build
 

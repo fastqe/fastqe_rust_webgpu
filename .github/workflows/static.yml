@@ -28,9 +28,7 @@ jobs:
         uses: robinraju/release-downloader@v1.8
         with:
          latest: true
-         fileName: "fastqe.data"
-         fileName: "fastqe.js"
-         fileName: "fastqe.wasm"
+         fileName: "fastqe.*"
          out-file-path: "pages"
       - name: Setup Pages
         uses: actions/configure-pages@v4

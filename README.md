@@ -1,5 +1,8 @@
 # fastqe_rust
 
+## Release
+
+Each release contains the biowasm compatible files:
 
 
 ## Build

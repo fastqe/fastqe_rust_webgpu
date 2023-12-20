@@ -2,7 +2,7 @@
 
 ## Release
 
-Each release contains the biowasm compatible files: https://github.com/fastqe/fastqe_rust/releases
+Each release contains the biowasm compatible files: https://github.com/fastqe/fastqe_rust/releases/latest
 
 
 ## Build

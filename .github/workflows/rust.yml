@@ -33,7 +33,7 @@ jobs:
       run: cargo build --verbose --target wasm32-unknown-emscripten --release
       
     - name: Gather target outputs 
-      run: mkdir biowasm && cp /target/wasm32-unknown-emscripten/release/fastqe.js biowasm && cp /target/wasm32-unknown-emscripten/release/fastqe.wasm biowasm && cp /target/wasm32-unknown-emscripten/release/deps/fastqe.data biowasm
+      run: mkdir biowasm && cp ./target/wasm32-unknown-emscripten/release/fastqe.js biowasm && cp ./target/wasm32-unknown-emscripten/release/fastqe.wasm biowasm && cp ./target/wasm32-unknown-emscripten/release/deps/fastqe.data biowasm
     - name: Verify  biowasm
       run: ls -Rl biowasm
 

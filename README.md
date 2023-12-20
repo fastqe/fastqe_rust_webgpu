@@ -6,6 +6,8 @@ Each release contains the biowasm compatible files: https://github.com/fastqe/fa
 
 Files are hosted at:
 
+Example Biowasm at:
+
 ## Build
 
 Emscriptem is needed; GitHub actions will do this as part of build process, `scripts/setup_emsdk.sh` also should work to setup local environment.. 

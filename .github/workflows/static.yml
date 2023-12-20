@@ -24,6 +24,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Get release files
+        uses: robinraju/release-downloader@v1.8
+        with:
+         latest: true
+         fileName: "fastqe.data"
+         fileName: "fastqe.js"
+         fileName: "fastqe.wasm"
+         out-file-path: "pages"
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact

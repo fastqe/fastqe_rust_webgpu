@@ -1,0 +1,76 @@
+<script  src="https://biowasm.com/cdn/v3/aioli.js"></script>
+<script type="module">
+
+
+const CLI = await new Aioli([{tool: "fastqe",
+   // version: "0.0.6",
+   // program: "fastqe",         // Optional: sub-tool name; not needed for most tools (default: same as tool name)
+    urlPrefix: "https://fastqe.github.io/fastqe_rust/",  // Optional: custom path to .wasm assets (default: biowasm CDN)
+ //   loading: "eager",         // Optional: if set to "lazy", only downloads WebAssembly modules when needed, not at initialization (default: eager)
+ //   reinit: false,           // Optional: if set to true, will reinitialize module after each invocation; not needed for most tools
+}]);
+
+
+const CLI2 = await new Aioli([{tool: "fastqe",
+   // version: "0.0.6",
+  //  program: "fastqe",         // Optional: sub-tool name; not needed for most tools (default: same as tool name)
+    urlPrefix: "https://fastqe.github.io/fastqe_rust/",  // Optional: custom path to .wasm assets (default: biowasm CDN)
+  //  loading: "eager",         // Optional: if set to "lazy", only downloads WebAssembly modules when needed, not at initialization (default: eager)
+   //    reinit: false,           // Optional: if set to true, will reinitialize module after each invocation; not needed for most tools
+}]);
+
+
+// Create mock fasta file
+await CLI2.mount({
+	name: "test.fq",
+    data: "@HWI-D00360:5:H814YADXX:1:2209:15175:39729 1:N:0:CGATGT\nTTGGAGGATTTTGGAGAATCCCCTTAGGGGGAAATGTTTAAAAGTGCAAAGTGAATAGTAGAAGCCCCTCTCCTCGTCACTAGGGGTACATTTGCCGTTTTCTTATCAACAGCCTCTCAAGTACAAGCATCTGGGACAAGAACTAGAA\n+\n@CCFFFFFHHHHHJIIIJJJJJJJJJJJJJJGIJIIIIJJJJIJCHIIJJJ@GGJJJIGIJJHGGHHFFFDEEEEDDDDDDDDDDD;@CDEEEEDDDBDDDDCDDDDECCDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDC\n@HWI-D00360:5:H814YADXX:1:2209:15401:39509 1:N:0:CGATGT\nAACTTCTTTTGCCCAGTCCTAATTTTTCTCCTCTTTTCCACGGGAATTGAGCCCAATAACACTTCATAATAACTATCTTAAATACTAAACTCATCTCAGCATTTTCTTCCTGGGGAATCTGACGTGATAGCCACAAATAGCATGTAGA\n+\nCCCFFFFFHHHHHJJJIIJJJJJJJJJJJJJJJJJJJJJJJJIJJJJIJJJIJJJJJJJJIJJJJIJIJJHHHHHHFFFFFFFEEEEEEDDDDDDCDDDDDCCDEEDDDDDD?BDDDDDDEDDDDDDDEDDDDDDDDDDDDDEDDEEC\n@HWI-D00360:5:H814YADXX:1:2209:15260:39576 1:N:0:CGATGT\nCGTGTTTTGTTGGCTTAGTTTTTGCTCTCATTGAGAGAAATAATATTGCTTTGCCATAGTAATTGAGTTTAACTACTGACACTTTCCATAGTCTAAAATTAATTGCTTTTAAGAAGAAATATTAGTTGAGGTTTCCAACGTTAGACCC\n+\n?@@DDDEFGFHFHIIGIJJJGHHIIJGIGGHEHEFBFHGGGIJIDDFGHIIJJJJIIEIFFEEGHEHFDFHJJJJJIHFEEHEDFEDEDEECCEDECCDDDCDDDDDDCDDCACACDACCDEDDCCDCCCCDDCCCCCC?AC??C@AA\n@HWI-D00360:5:H814YADXX:1:2209:15451:39625 1:N:0:CGATGT\nCGTTAGTTCATCAGCAATGGATCCAAACCAAGATGAAGTCTCTGATTTACCTGAAAAAGAAATCAGAAGGATAGTTATTAAGCTAATCAGGGAGAGACCAGAGAAAGTGAAAGCCCAATGCAAGGAAATCCAAAAACTGATATGAGAA\n+\nBCBFFFFFHHHHHJJJHJJJJJJJJJJJJJJJJJJJJJIIIJIJJJJJJJJJJJJJJIJJJJJJJJJJJJJJJHHHHHHHFFFFFFFEEEECDDDDDDDDDDDDDDDCDDEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDEDEDDD"
+});
+
+
+
+// Convert .sam to a .fastq
+let output_help = await CLI.exec("fastqe --help");
+
+// Convert .sam to a .fastq
+let output = await CLI2.exec("fastqe test.fq");
+
+// Run seqtk on "toy.fastq" to generate metrics
+document.getElementById("output").innerHTML = output;
+document.getElementById("output_help").innerHTML = output_help;
+
+</script>
+    
+
+<h1>FASTQE WebAssembly and Biowasm Example</h1>
+
+Use an Biowasm compatible Aioli object and create a CLI instance to process FASTQE commands, e.g.
+
+<pre>
+
+   &lt;script  src="https://biowasm.com/cdn/v3/aioli.js"&gt;&lt;/script&gt
+   &lt;script type="module"&gt;
+
+    
+    const CLI = await new Aioli([{tool: "fastqe",
+        program: "fastqe",         
+        urlPrefix: "https://fastqe.github.io/fastqe_rust/",
+    }]);
+
+     let output_help = await CLI.exec("fastqe --help");
+     document.getElementById("output_help").innerHTML = output_help;
+
+     &lt;/script&gt;
+
+
+     &lt;h4&gt;Output of  &lt;code&gt;fastqe --help &lt;/code&gt;: &lt;/h4&gt;
+     &lt;pre id="output_help">Loading... &lt;/pre&gt;
+
+
+
+</pre>
+
+<h4>Output of <code>fastqe test.fq</code>:</h4>
+<pre id="output">Loading...</pre>
+
+<h4>Output of <code>fastqe --help</code>:</h4>
+<pre id="output_help">Loading...</pre>

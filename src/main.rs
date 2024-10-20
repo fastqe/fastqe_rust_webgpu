@@ -499,6 +499,11 @@ fn main() {
             .value_name("LOG_FILE")
             .help("Record program progress in LOG_FILE ✅")
             .num_args(1))
+	 .arg(Arg::new("gpu")
+            .long("gpu")
+            .num_args(0)
+            .help_heading("GPU enabled")
+            .help("Use avaiable GPUs"))
         // Add the rest of your arguments here
         .after_help("For more information, vist https://fastqe.com")
         .get_matches();

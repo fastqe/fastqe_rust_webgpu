@@ -155,7 +155,10 @@ impl FastaStats {
             trim_zeros(&mut means);
             trim_zeros(&mut counts);
 
-
+	    // WEbGPU demo we export data here for WebGPU and JS handling, rather than mapping diviions
+	    write!(means);
+	    write!(counts);
+		
             let result: Vec<f64> = means.iter().zip(counts.iter()).map(|(&a, &b)| a / b).collect();
             means = result.into_iter().map(|x| x.ceil()).collect();
             let means_as_q = means.iter().map(|&x| x as u8).collect::<Vec<u8>>();
@@ -526,7 +529,7 @@ fn main() {
             match open_possible_gz_file(filename) {
                 Ok(file) => {
                     info!(target: "log_messages", "Processing FASTA file from {}", filename);
-                    compute_print_stats(&options, filename, file);
+                    //compute_print_stats(&options, filename, file);
                 }
                 Err(error) => exit_with_error(EXIT_FILE_IO_ERROR,
                     &format!("Failed to open '{}'. {}", filename, error)),
@@ -538,7 +541,7 @@ fn main() {
     None => {
 //        // read from stdin instead.
         info!(target: "log_messages", "Processing FASTA file from stdin");
-        compute_print_stats(&options, &String::from("stdin"), io::stdin())
+        //compute_print_stats(&options, &String::from("stdin"), io::stdin())
 
 }
 

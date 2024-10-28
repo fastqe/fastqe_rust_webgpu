@@ -229,7 +229,7 @@ impl fmt::Display for FastaStats {
                 //"{}\t{}\t{:?}\t{}\t{}",
                 //  "{}\t{:?}\t{:?}",
  
-                "{}\t{}",
+                "{}\n{}",
 		   self.sum_gpu,
 		   self.counts_gpu
 		   
@@ -384,7 +384,8 @@ fn compute_print_stats<R: io::Read>(options: &ArgMatches, filename: &String, rea
     match FastaStats::new(*options.get_one::<u64>("minlen").unwrap(),*options.get_one::<u64>("long").unwrap(), reader) {
         Ok(Some(stats)) => {
             // Prefix the FASTA filename onto the front of the statistics
-            println!("{}\t{}", filename, stats);
+           //println!("{}\t{}", filename, stats);
+	    println!("{}", stats);
         }
         Ok(None) => {
             // We could not compute any statistics for the file because
@@ -527,7 +528,7 @@ fn main() {
 
     // Display the output header.
     //println!("FILENAME\tNUMSEQ\tTOTAL\tMIN\tAVG\tMAX");
-    println!("Filename\tStatistic\tQuality");
+    //println!("Filename\tStatistic\tQuality");
 
 
     let files = match options.get_many("FASTQ_FILE") {

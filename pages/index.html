@@ -5,7 +5,7 @@
 const CLI = await new Aioli([{tool: "fastqe",
    // version: "0.0.6",
    // program: "fastqe",         // Optional: sub-tool name; not needed for most tools (default: same as tool name)
-    urlPrefix: "https://fastqe.github.io/fastqe_rust/",  // Optional: custom path to .wasm assets (default: biowasm CDN)
+    urlPrefix: "https://fastqe.github.io/fastqe_rust_webgpu/",  // Optional: custom path to .wasm assets (default: biowasm CDN)
  //   loading: "eager",         // Optional: if set to "lazy", only downloads WebAssembly modules when needed, not at initialization (default: eager)
  //   reinit: false,           // Optional: if set to true, will reinitialize module after each invocation; not needed for most tools
 }]);
@@ -14,7 +14,7 @@ const CLI = await new Aioli([{tool: "fastqe",
 const CLI2 = await new Aioli([{tool: "fastqe",
    // version: "0.0.6",
   //  program: "fastqe",         // Optional: sub-tool name; not needed for most tools (default: same as tool name)
-    urlPrefix: "https://fastqe.github.io/fastqe_rust/",  // Optional: custom path to .wasm assets (default: biowasm CDN)
+    urlPrefix: "https://fastqe.github.io/fastqe_rust_webgpu/",  // Optional: custom path to .wasm assets (default: biowasm CDN)
   //  loading: "eager",         // Optional: if set to "lazy", only downloads WebAssembly modules when needed, not at initialization (default: eager)
    //    reinit: false,           // Optional: if set to true, will reinitialize module after each invocation; not needed for most tools
 }]);
@@ -53,7 +53,7 @@ Use an Biowasm compatible Aioli object and create a CLI instance to process FAST
     
     const CLI = await new Aioli([{tool: "fastqe",
         program: "fastqe",         
-        urlPrefix: "https://fastqe.github.io/fastqe_rust/",
+        urlPrefix: "https://fastqe.github.io/fastqe_rust_webgpu/",
     }]);
 
      let output_help = await CLI.exec("fastqe --help");

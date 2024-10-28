@@ -192,8 +192,8 @@ impl FastaStats {
                 num_seqs: num_seqs,
                 longread: longread,
                 means: CountVec(means),
-		sum_gpu: sum_gpu,
-                counts_gpu: counts_gpu,
+		sum_gpu: CountVec(sum_gpu),
+                counts_gpu: CountVec(counts_gpu),
                 meansRecord: fake_record
                 
             }))

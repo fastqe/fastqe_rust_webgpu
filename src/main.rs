@@ -76,6 +76,8 @@ pub struct FastaStats {
     longread: u64,
     /// Means results
     means: CountVec,
+    sum_gpu: CountVec,
+    counts_gpu: CountVec,
     /// Fastq record with mean scores
     meansRecord: fastq::Record
 }
@@ -99,6 +101,8 @@ impl FastaStats {
         let mut min_len: u64 = 0;
         let mut this_len: u64;
         let mut means = vec![0.0; longread as usize];
+	let mut counts_gpu = vec![0.0; longread as usize];
+	let mut sum_gpu = vec![0.0; longread as usize];
         let mut counts = vec![0.0; longread as usize];
 
         // Read each sequence in the input FASTA file.
@@ -155,10 +159,10 @@ impl FastaStats {
             trim_zeros(&mut means);
             trim_zeros(&mut counts);
 
-	    // WEbGPU demo we export data here for WebGPU and JS handling, rather than mapping diviions
-	    write!(means);
-	    write!(counts);
-		
+	 
+	    sum_gpu = means;
+	    counts_gpu = counts;
+	
             let result: Vec<f64> = means.iter().zip(counts.iter()).map(|(&a, &b)| a / b).collect();
             means = result.into_iter().map(|x| x.ceil()).collect();
             let means_as_q = means.iter().map(|&x| x as u8).collect::<Vec<u8>>();
@@ -188,6 +192,8 @@ impl FastaStats {
                 num_seqs: num_seqs,
                 longread: longread,
                 means: CountVec(means),
+		sum_gpu: sum_gpu,
+                counts_gpu: counts_gpu,
                 meansRecord: fake_record
                 
             }))
@@ -224,12 +230,15 @@ impl fmt::Display for FastaStats {
                 //  "{}\t{:?}\t{:?}",
  
                 "{}\t{}",
+		   self.sum_gpu,
+		   self.counts_gpu
+		   
                 // "{}\t{:?}",
                 //self.num_seqs,
                 //self.means,
-                self.meansRecord.desc().unwrap(),
+                //self.meansRecord.desc().unwrap(),
                // self.meansRecord.qual().iter().map(|&n| fastqe_map::get_fastq_emoji_map().get(&(n as char)).expect("REASON").to_string()).collect::<Vec<_>>(),
-               self.meansRecord.qual().iter().map(|&n| emojireplace( fastqe_map::get_fastq_emoji_map().get(&(n as char)).expect("REASON")).unwrap().as_str()).collect::<Vec<_>>().join(" "),
+               //self.meansRecord.qual().iter().map(|&n| emojireplace( fastqe_map::get_fastq_emoji_map().get(&(n as char)).expect("REASON")).unwrap().as_str()).collect::<Vec<_>>().join(" "),
                 //self.average_len,
                 //self.max_len
              )
@@ -529,7 +538,7 @@ fn main() {
             match open_possible_gz_file(filename) {
                 Ok(file) => {
                     info!(target: "log_messages", "Processing FASTA file from {}", filename);
-                    //compute_print_stats(&options, filename, file);
+                    compute_print_stats(&options, filename, file);
                 }
                 Err(error) => exit_with_error(EXIT_FILE_IO_ERROR,
                     &format!("Failed to open '{}'. {}", filename, error)),
@@ -541,7 +550,7 @@ fn main() {
     None => {
 //        // read from stdin instead.
         info!(target: "log_messages", "Processing FASTA file from stdin");
-        //compute_print_stats(&options, &String::from("stdin"), io::stdin())
+        compute_print_stats(&options, &String::from("stdin"), io::stdin())
 
 }
 

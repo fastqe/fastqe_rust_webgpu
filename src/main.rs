@@ -160,8 +160,8 @@ impl FastaStats {
             trim_zeros(&mut counts);
 
 	 
-	    sum_gpu = means;
-	    counts_gpu = counts;
+	    sum_gpu = means.clone();
+	    counts_gpu = counts.clone();
 	
             let result: Vec<f64> = means.iter().zip(counts.iter()).map(|(&a, &b)| a / b).collect();
             means = result.into_iter().map(|x| x.ceil()).collect();

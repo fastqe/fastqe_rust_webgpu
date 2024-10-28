@@ -1,0 +1,49 @@
+name: Combile Rust to WebAssembly
+
+on: push
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Build Rust
+    runs-on: ubuntu-latest
+    steps:
+    - uses: mymindstorm/setup-emsdk@v13
+    - name: Verify
+      run: emcc -v
+
+    - name: Update Rust
+      run: rustup update beta && rustup default beta
+    - name: Verify Rust
+      run: rustc --version
+
+    - name: Add emscripten to rustc
+      run: rustup target add  wasm32-unknown-emscripten
+      
+    - uses: actions/checkout@v3
+    - name: Verify ls 
+      run: ls -R 
+    - name: Build
+      run: cargo build --verbose --target wasm32-unknown-emscripten --release
+      
+    - name: Gather target outputs 
+      run: mkdir biowasm && cp ./target/wasm32-unknown-emscripten/release/fastqe.js biowasm && cp ./target/wasm32-unknown-emscripten/release/fastqe.wasm biowasm && cp ./target/wasm32-unknown-emscripten/release/deps/fastqe.data biowasm
+    - name: Verify  biowasm
+      run: ls -Rl biowasm
+    - uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+       files: biowasm/*
+      env:
+       GITHUB_TOKEN: ${{ secrets.RUST_DEPLOY_KEY }}
+
+
+    - name: Run tests (TODO)
+      run: echo cargo test --verbose
+    - name: Invoke workflow to build page with latest release 
+      uses: benc-uk/workflow-dispatch@v1
+      with:
+        workflow: static.yml
+  

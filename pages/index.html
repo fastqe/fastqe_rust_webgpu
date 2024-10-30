@@ -1,76 +1,601 @@
-<script  src="https://biowasm.com/cdn/v3/aioli.js"></script>
-<script type="module">
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGPU GPU Info</title>
+</head>
+<body>
+    <h2>WebGPU GPU Information</h2>
+    <p id="gpu-info">Detecting your GPU...</p>
+ 
+    <h1>CPU (WASM) Version</h1>
+    <p id="wasm-result">Running WASM...</p>
+
+    <h1>GPU (WebGPU) Version</h1>
+    <p id="compute-input-sums">Input 1... </p>
+    <p id="compute-input-counts">Input 2... </p>
+
+    <p id="compute-result">Running compute shader... </p>
+    <p id="compute-result-emoji">Convert means to... </p>
+
+    <script  src="https://biowasm.com/cdn/v3/aioli.js"></script>
+
+    <script>
+
+function getFastqEmojiMapCustom() {
+  const fastqEmojiMapCustom = {
+    0: '🌋',
+    1: '🌌',
+    2: '🪐',
+    3: '✨',
+    4: '⚡',
+    5: '🌠',
+    6: '💥',
+    7: '🔥',
+    8: '🌟',
+    9: '🌈',
+    10: '🌞',
+    11: '🌛',
+    14: '🌜',
+    12: '🌓',
+    13: '🌒',
+    15: '🌑',
+    16: '🌕',
+    17: '🌖',
+    18: '🌗',
+    19: '🌘',
+    20: '🪄',
+    21: '🪞',
+    22: '🛸',
+    23: '🪐',
+    24: '🌀',
+    25: '🌊',
+    26: '🌫️',
+    27: '🌬️',
+    29: '☁️',
+    31: '⛈️',
+    28: '🌤️',
+    30: '🌥️',
+    32: '🌦️',
+    33: '🌧️',
+    34: '🌨️',
+    35: '🌩️',
+    36: '🌪️',
+    37: '🌫️',
+    38: '🌀',
+    39: '🌠',
+    40: '🌌',
+    41: '🌋'
+  };
+  return fastqEmojiMapCustom;
+}
+
+function getFastqEmojiMap() {
+  const fastqEmojiMap = {
+    0: '🚫',
+    1: '❌',
+    2: '👺',
+    3: '💔',
+    4: '🙅',
+    5: '👾',
+    6: '👿',
+    7: '💀',
+    8: '👻',
+    9: '🙈',
+    10: '🙉',
+    11: '🙊',
+    14: '😾',
+    12: '🐵',
+    13: '😿',
+    15: '🙀',
+    16: '💣',
+    17: '🔥',
+    18: '😡',
+    19: '💩',
+    20: '🚨',
+    21: '😀',
+    22: '😅',
+    23: '😏',
+    24: '😊',
+    25: '😙',
+    26: '😗',
+    27: '😚',
+    29: '😘',
+    31: '😄',
+    28: '😃',
+    30: '😆',
+    32: '😋',
+    33: '☺️',
+    34: '😛',
+    35: '😝',
+    36: '😜',
+    37: '😁',
+    38: '😄',
+    39: '😎',
+    40: '😍',
+    41: '😉'
+  };
+  return fastqEmojiMap;
+}
+
+function getFastqEmojiMapBinned() {
+  const fastqEmojiMapBinned = {
+    0: '🚫',
+    1: '🚫',
+    2: '💀',
+    3: '💀',
+    4: '💀',
+    5: '💀',
+    6: '💀',
+    7: '💀',
+    8: '💀',
+    9: '💀',
+    10: '💩',
+    11: '💩',
+    12: '💩',
+    13: '💩',
+    14: '💩',
+    15: '💩',
+    16: '💩',
+    17: '💩',
+    18: '💩',
+    19: '💩',
+    20: '🚨',
+    21: '🚨',
+    22: '🚨',
+    23: '🚨',
+    24: '🚨',
+    25: '😄',
+    26: '😄',
+    27: '😄',
+    28: '😄',
+    29: '😄',
+    30: '😆',
+    31: '😆',
+    32: '😆',
+    33: '😆',
+    34: '😆',
+    35: '😎',
+    36: '😎',
+    37: '😎',
+    38: '😎',
+    39: '😎',
+    40: '😍',
+    41: '😍'
+  };
+  return fastqEmojiMapBinned;
+}
+
+function getFastqNoEmojiMap() {
+  const fastqNoEmojiMap = {
+    0: '▁',
+    1: '▁',
+    2: '▂',
+    3: '▂',
+    4: '▂',
+    5: '▂',
+    6: '▂',
+    7: '▂',
+    8: '▂',
+    9: '▂',
+    10: '▃',
+    11: '▃',
+    12: '▃',
+    13: '▃',
+    14: '▃',
+    15: '▃',
+    16: '▃',
+    17: '▃',
+    18: '▃',
+    19: '▃',
+    20: '▄',
+    21: '▄',
+    22: '▄',
+    23: '▄',
+    24: '▄',
+    25: '▅',
+    26: '▅',
+    27: '▅',
+    28: '▅',
+    29: '▅',
+    30: '▆',
+    31: '▆',
+    32: '▆',
+    33: '▆',
+    34: '▆',
+    35: '▇',
+    36: '▇',
+    37: '▇',
+    38: '▇',
+    39: '▇',
+    40: '█',
+    41: '█'
+  };
+  return fastqNoEmojiMap;
+}
+
+// Usage example
+const seqEmojiMap = getFastqEmojiMap();
+console.log(seqEmojiMap[23]); // Output: :apple:
+
+const fastqEmojiMap = getFastqEmojiMap();
+console.log(fastqEmojiMap[1]); // Output: :bomb:
+
+
+        async function getGPUInfo() {
+            console.log('Starting getGPUInfo function');
+
+            // Check if WebGPU is supported
+            if (!navigator.gpu) {
+                console.log('WebGPU is not supported on this browser.');
+                document.getElementById('gpu-info').textContent = 'WebGPU is not supported on this browser.';
+                return;
+            }
+
+            try {
+                console.log('Requesting GPU adapter...');
+                // Request an adapter
+                const adapter = await navigator.gpu.requestAdapter();
+                if (!adapter) {
+                    console.log('No suitable GPU adapter found.');
+                    document.getElementById('gpu-info').textContent = 'No suitable GPU adapter found.';
+                    return;
+                }
+
+                console.log('GPU adapter found:', adapter);
+                // Print the GPU details to the web page
+                const gpuName = adapter.info.vendor;
+                document.getElementById('gpu-info').textContent = `GPU Vendor: ${gpuName}`;
+                console.log('GPU Name:', gpuName);
+
+// Check for specific Apple M-series GPUs
+if (gpuName.includes("Apple M1")) {
+    console.log('Detected an Apple M1 GPU');
+    document.getElementById('gpu-info').textContent += ' (Apple M1)';
+} else if (gpuName.includes("Apple M2")) {
+    console.log('Detected an Apple M2 GPU');
+    document.getElementById('gpu-info').textContent += ' (Apple M2)';
+} else if (gpuName.includes("Apple M3")) {
+    console.log('Detected an Apple M3 GPU');
+    document.getElementById('gpu-info').textContent += ' (Apple M3)';
+}
+
+
+                // Assume the sums and counts arrays are sourced from another program and passed in here
+                const { sumsArray, countsArray } = await getNumberArraysFromExternalSource();
+
+
+                // Run a basic computation using a compute shader
+                //await runComputeShader();
+                if (sumsArray.length !== countsArray.length) {
+                    console.error('Sums and counts arrays must be of the same length.');
+                    document.getElementById('compute-result').textContent = 'Error: Sums and counts arrays must be of the same length.';
+                    return;
+                };
+                document.getElementById('compute-input-sums').textContent += `Sums... ${sumsArray.join(' ')}`;
+                document.getElementById('compute-input-counts').textContent += `Counts... ${countsArray.join(' ')}`;
+
+
+                await runComputeShader(sumsArray, countsArray);
+
+
+                // Load and run the WASM module
+               
+            } catch (error) {
+                console.error('An error occurred while trying to access the GPU:', error);
+                document.getElementById('gpu-info').textContent = 'An error occurred while trying to access the GPU.';
+            }
+        }
+
+
+        async function getNumberArraysFromExternalSource() {
+            // Placeholder function to simulate reading sums and counts arrays from another program
+            // Assume the input is a two-line string where the first line is sums and the second is counts
+            console.log('Fetching sums and counts arrays from external source...');
+            //const input = `10.0, 20.0, 30.0
+//2.0, 4.0, 5.0`;
 
 const CLI = await new Aioli([{tool: "fastqe",
-   // version: "0.0.6",
-   // program: "fastqe",         // Optional: sub-tool name; not needed for most tools (default: same as tool name)
-    urlPrefix: "https://fastqe.github.io/fastqe_rust_webgpu/",  // Optional: custom path to .wasm assets (default: biowasm CDN)
- //   loading: "eager",         // Optional: if set to "lazy", only downloads WebAssembly modules when needed, not at initialization (default: eager)
- //   reinit: false,           // Optional: if set to true, will reinitialize module after each invocation; not needed for most tools
-}]);
+        program: "fastqe",         
+        urlPrefix: "https://fastqe.github.io/fastqe_rust_webgpu/",
+    }]);
 
 
-const CLI2 = await new Aioli([{tool: "fastqe",
-   // version: "0.0.6",
-  //  program: "fastqe",         // Optional: sub-tool name; not needed for most tools (default: same as tool name)
-    urlPrefix: "https://fastqe.github.io/fastqe_rust_webgpu/",  // Optional: custom path to .wasm assets (default: biowasm CDN)
-  //  loading: "eager",         // Optional: if set to "lazy", only downloads WebAssembly modules when needed, not at initialization (default: eager)
-   //    reinit: false,           // Optional: if set to true, will reinitialize module after each invocation; not needed for most tools
-}]);
+await CLI.mount({
+	name: "test.fq",
+    data: "@HWI-D00360:5:H814YADXX:1:2209:15175:39729 1:N:0:CGATGT\nTTGGAGGATTTTGGAGAATCCCCTTAGGGGGAAATGTTTAAAAGTGCAAAGTGAATAGTAGAAGCCCCTCTCCTCGTCACTAGGGGTACATTTGCCGTTTTCTTATCAACAGCCTCTCAAGTACAAGCATCTGGGACAAGAACTAGAA\n+\n@CCFFFFFHHHHHJIIIJJJJJJJJJJJJJJGIJIIIIJJJJIJCHIIJJJ@GGJJJIGIJJHGGHHFFFDEEEEDDDDDDDDDDD;@CDEEEEDDDBDDDDCDDDDECCDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDC\n@HWI-D00360:5:H814YADXX:1:2209:15401:39509 1:N:0:CGATGT\nAACTTCTTTTGCCCAGTCCTAATTTTTCTCCTCTTTTCCACGGGAATTGAGCCCAATAACACTTCATAATAACTATCTTAAATACTAAACTCATCTCAGCATTTTCTTCCTGGGGAATCTGACGTGATAGCCACAAATAGCATGTAGA\n+\nCCCFFFFFHHHHHJJJIIJJJJJJJJJJJJJJJJJJJJJJJJIJJJJIJJJIJJJJJJJJIJJJJIJIJJHHHHHHFFFFFFFEEEEEEDDDDDDCDDDDDCCDEEDDDDDD?BDDDDDDEDDDDDDDEDDDDDDDDDDDDDEDDEEC\n@HWI-D00360:5:H814YADXX:1:2209:15260:39576 1:N:0:CGATGT\nCGTGTTTTGTTGGCTTAGTTTTTGCTCTCATTGAGAGAAATAATATTGCTTTGCCATAGTAATTGAGTTTAACTACTGACACTTTCCATAGTCTAAAATTAATTGCTTTTAAGAAGAAATATTAGTTGAGGTTTCCAACGTTAGACCC\n+\n?@@DDDEFGFHFHIIGIJJJGHHIIJGIGGHEHEFBFHGGGIJIDDFGHIIJJJJIIEIFFEEGHEHFDFHJJJJJIHFEEHEDFEDEDEECCEDECCDDDCDDDDDDCDDCACACDACCDEDDCCDCCCCDDCCCCCC?AC??C@AA\n@HWI-D00360:5:H814YADXX:1:2209:15451:39625 1:N:0:CGATGT\nCGTTAGTTCATCAGCAATGGATCCAAACCAAGATGAAGTCTCTGATTTACCTGAAAAAGAAATCAGAAGGATAGTTATTAAGCTAATCAGGGAGAGACCAGAGAAAGTGAAAGCCCAATGCAAGGAAATCCAAAAACTGATATGAGAA\n+\nBCBFFFFFHHHHHJJJHJJJJJJJJJJJJJJJJJJJJJIIIJIJJJJJJJJJJJJJJIJJJJJJJJJJJJJJJHHHHHHHFFFFFFFEEEECDDDDDDDDDDDDDDDCDDEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDEDEDDD"
+});
+
+let output_help = await CLI.exec("fastqe test.fq");
+
+
+
+            const input =  output_help;
+            //document.getElementById("output_help"); 
+
+            const [sumsLine, countsLine] = input.split('\n');
+            console.log(sumsLine);
+            console.log(countsLine);
+
+            
+            const sumsArray = new Float32Array(sumsLine.split(', ').map(Number));
+            const countsArray = new Float32Array(countsLine.split(', ').map(Number));
+            return { sumsArray, countsArray };
+        }
+
+       
+
+
+        async function runComputeShader(sumsArray, countsArray) {
+            console.log('Starting runComputeShader function');
+
+            try {
+                const adapter = await navigator.gpu.requestAdapter();
+                const device = await adapter.requestDevice();
+
+                // // Create a GPU buffer to store data
+                // const bufferSize = 4; // 4 bytes (1 float)
+                // const gpuBuffer = device.createBuffer({
+                //     size: bufferSize,
+                //     usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
+                // });
+
+                 // Create GPU buffers for sums and counts
+                 const bufferSize = sumsArray.byteLength;
+                 const sumsBuffer = device.createBuffer({
+                    size: bufferSize,
+                    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+                });
+                device.queue.writeBuffer(sumsBuffer, 0, sumsArray.buffer, 0, bufferSize);
+
+                const countsBuffer = device.createBuffer({
+                    size: bufferSize,
+                    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+                });
+                device.queue.writeBuffer(countsBuffer, 0, countsArray.buffer, 0, bufferSize);
+                // Create a buffer for the results (means)
+                const resultBuffer = device.createBuffer({
+                    size: bufferSize,
+                    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
+                });
+
+
+                // Create a staging buffer to read the results back to the CPU
+                const stagingBuffer = device.createBuffer({
+                    size: bufferSize,
+                    usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST,
+                });
+
+
+
+// Create a shader module with a compute shader to calculate the mean for each value
+const shaderModule = device.createShaderModule({
+                    code: `
+                         @group(0) @binding(0) var<storage, read_write> sums : array<f32>;
+                        @group(0) @binding(1) var<storage, read_write> counts : array<f32>;
+                        @group(0) @binding(2) var<storage, read_write> results : array<f32>;
+
+                        @compute @workgroup_size(64)
+                        fn main(@builtin(global_invocation_id) GlobalInvocationID : vec3<u32>) {
+                            let index = GlobalInvocationID.x;
+                            
+                            if (counts[index] != 0.0) {
+                                results[index] = round(sums[index] / counts[index] - 33.0);
+                            } else {
+                                results[index] = 0.0; // Handle division by zero
+                            }
+                        }
+                    `,
+                });
+
+
+
+
+
+
+               // Create a bind group layout and bind group
+               const bindGroupLayout = device.createBindGroupLayout({
+                    entries: [
+                        {
+                            binding: 0,
+                            visibility: GPUShaderStage.COMPUTE,
+                            buffer: {
+                                type: 'storage',
+                            },
+                        },
+                        {
+                            binding: 1,
+                            visibility: GPUShaderStage.COMPUTE,
+                            buffer: {
+                                type: 'storage',
+                            },
+                        },
+                        {
+                            binding: 2,
+                            visibility: GPUShaderStage.COMPUTE,
+                            buffer: {
+                                type: 'storage',
+                            },
+                        },
+                    ],
+                });
+
+                const bindGroup = device.createBindGroup({
+                    layout: bindGroupLayout,
+                    entries: [
+                         {
+                            binding: 0,
+                            resource: {
+                                buffer: sumsBuffer,
+                            },
+                        },
+                        {
+                            binding: 1,
+                            resource: {
+                                buffer: countsBuffer,
+                            },
+                        },
+                        {
+                            binding: 2,
+                            resource: {
+                                buffer: resultBuffer,
+                            },
+                        },
+                    ],
+                });
+
+                // Create a pipeline for the compute shader
+                const computePipeline = device.createComputePipeline({
+                    layout: device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] }),
+                    compute: {
+                        module: shaderModule,
+                        entryPoint: 'main',
+                    },
+                });
+
+                 // Encode commands to run the compute shader
+                 const commandEncoder = device.createCommandEncoder();
+                const passEncoder = commandEncoder.beginComputePass();
+                passEncoder.setPipeline(computePipeline);
+                passEncoder.setBindGroup(0, bindGroup);
+                //passEncoder.dispatchWorkgroups(sumsArray.length);
+                passEncoder.dispatchWorkgroups(Math.ceil(sumsArray.length / 64));
+
+                passEncoder.end();
+
+                // // Copy the result to a buffer that can be read by the CPU
+                // const readBuffer = device.createBuffer({
+                //     size: bufferSize,
+                //     usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+                // });
+                // commandEncoder.copyBufferToBuffer(gpuBuffer, 0, readBuffer, 0, bufferSize);
+
+
+                // Copy the result to the staging buffer
+                commandEncoder.copyBufferToBuffer(resultBuffer, 0, stagingBuffer, 0, bufferSize);
+
+
+                
+                // Submit the commands
+                const gpuCommands = commandEncoder.finish();
+                device.queue.submit([gpuCommands]);
+
+                // Read the result
+                //await resultBuffer.mapAsync(GPUMapMode.READ);
+                await stagingBuffer.mapAsync(GPUMapMode.READ);
+
+                const arrayBuffer = stagingBuffer.getMappedRange();
+
+                //const arrayBuffer = resultBuffer.getMappedRange();
+                const means = new Float32Array(arrayBuffer);
+                console.log('Means of arrays after subtracting 33:', means);
+                document.getElementById('compute-result').textContent += `Means... ${means.join(' ')}`;
+                const fastqEmojiMap = getFastqEmojiMapCustom();
+                
+                console.log('lookup test', fastqEmojiMap[3]);
+                const integerArray = Array.from(means, value => Math.round(value));
+
+                document.getElementById('compute-result-emoji').textContent +=  integerArray.map(value => fastqEmojiMap[value] || value).join('');
+
+                resultBuffer.unmap();
+            } catch (error) {
+                console.error('An error occurred while running the compute shader:', error);
+                document.getElementById('compute-result').textContent = 'An error occurred while running the compute shader.';
+            }
+        }
+
+       
+
+        console.log('Calling getGPUInfo function');
+        //getGPUInfo();
+    </script>
+
+
+   <script type="module">
+
+    
+    const CLI = await new Aioli([{tool: "fastqe",
+        program: "fastqe",         
+        urlPrefix: "https://fastqe.github.io/fastqe_rust/",
+    }]);
 
 
 // Create mock fasta file
-await CLI2.mount({
+await CLI.mount({
 	name: "test.fq",
     data: "@HWI-D00360:5:H814YADXX:1:2209:15175:39729 1:N:0:CGATGT\nTTGGAGGATTTTGGAGAATCCCCTTAGGGGGAAATGTTTAAAAGTGCAAAGTGAATAGTAGAAGCCCCTCTCCTCGTCACTAGGGGTACATTTGCCGTTTTCTTATCAACAGCCTCTCAAGTACAAGCATCTGGGACAAGAACTAGAA\n+\n@CCFFFFFHHHHHJIIIJJJJJJJJJJJJJJGIJIIIIJJJJIJCHIIJJJ@GGJJJIGIJJHGGHHFFFDEEEEDDDDDDDDDDD;@CDEEEEDDDBDDDDCDDDDECCDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDC\n@HWI-D00360:5:H814YADXX:1:2209:15401:39509 1:N:0:CGATGT\nAACTTCTTTTGCCCAGTCCTAATTTTTCTCCTCTTTTCCACGGGAATTGAGCCCAATAACACTTCATAATAACTATCTTAAATACTAAACTCATCTCAGCATTTTCTTCCTGGGGAATCTGACGTGATAGCCACAAATAGCATGTAGA\n+\nCCCFFFFFHHHHHJJJIIJJJJJJJJJJJJJJJJJJJJJJJJIJJJJIJJJIJJJJJJJJIJJJJIJIJJHHHHHHFFFFFFFEEEEEEDDDDDDCDDDDDCCDEEDDDDDD?BDDDDDDEDDDDDDDEDDDDDDDDDDDDDEDDEEC\n@HWI-D00360:5:H814YADXX:1:2209:15260:39576 1:N:0:CGATGT\nCGTGTTTTGTTGGCTTAGTTTTTGCTCTCATTGAGAGAAATAATATTGCTTTGCCATAGTAATTGAGTTTAACTACTGACACTTTCCATAGTCTAAAATTAATTGCTTTTAAGAAGAAATATTAGTTGAGGTTTCCAACGTTAGACCC\n+\n?@@DDDEFGFHFHIIGIJJJGHHIIJGIGGHEHEFBFHGGGIJIDDFGHIIJJJJIIEIFFEEGHEHFDFHJJJJJIHFEEHEDFEDEDEECCEDECCDDDCDDDDDDCDDCACACDACCDEDDCCDCCCCDDCCCCCC?AC??C@AA\n@HWI-D00360:5:H814YADXX:1:2209:15451:39625 1:N:0:CGATGT\nCGTTAGTTCATCAGCAATGGATCCAAACCAAGATGAAGTCTCTGATTTACCTGAAAAAGAAATCAGAAGGATAGTTATTAAGCTAATCAGGGAGAGACCAGAGAAAGTGAAAGCCCAATGCAAGGAAATCCAAAAACTGATATGAGAA\n+\nBCBFFFFFHHHHHJJJHJJJJJJJJJJJJJJJJJJJJJIIIJIJJJJJJJJJJJJJJIJJJJJJJJJJJJJJJHHHHHHHFFFFFFFEEEECDDDDDDDDDDDDDDDCDDEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDEDEDDD"
 });
 
 
 
-// Convert .sam to a .fastq
-let output_help = await CLI.exec("fastqe --help");
+     let output_help = await CLI.exec("fastqe test.fq");
+     //document.getElementById("output_help").innerHTML = output_help.split("\t")[4];
+     document.getElementById("wasm-result").innerHTML = output_help.split("\t")[4];
 
-// Convert .sam to a .fastq
-let output = await CLI2.exec("fastqe test.fq");
+   
+    // let fastqdata = await CLI.exec("fa test.fq");
 
-// Run seqtk on "toy.fastq" to generate metrics
-document.getElementById("output").innerHTML = output;
-document.getElementById("output_help").innerHTML = output_help;
+//document.getElementById("fastq-file").innerHTML = "@HWI-D00360:5:H814YADXX:1:2209:15175:39729 1:N:0:CGATGT\nTTGGAGGATTTTGGAGAATCCCCTTAGGGGGAAATGTTTAAAAGTGCAAAGTGAATAGTAGAAGCCCCTCTCCTCGTCACTAGGGGTACATTTGCCGTTTTCTTATCAACAGCCTCTCAAGTACAAGCATCTGGGACAAGAACTAGAA\n+\n@CCFFFFFHHHHHJIIIJJJJJJJJJJJJJJGIJIIIIJJJJIJCHIIJJJ@GGJJJIGIJJHGGHHFFFDEEEEDDDDDDDDDDD;@CDEEEEDDDBDDDDCDDDDECCDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDC\n@HWI-D00360:5:H814YADXX:1:2209:15401:39509 1:N:0:CGATGT\nAACTTCTTTTGCCCAGTCCTAATTTTTCTCCTCTTTTCCACGGGAATTGAGCCCAATAACACTTCATAATAACTATCTTAAATACTAAACTCATCTCAGCATTTTCTTCCTGGGGAATCTGACGTGATAGCCACAAATAGCATGTAGA\n+\nCCCFFFFFHHHHHJJJIIJJJJJJJJJJJJJJJJJJJJJJJJIJJJJIJJJIJJJJJJJJIJJJJIJIJJHHHHHHFFFFFFFEEEEEEDDDDDDCDDDDDCCDEEDDDDDD?BDDDDDDEDDDDDDDEDDDDDDDDDDDDDEDDEEC\n@HWI-D00360:5:H814YADXX:1:2209:15260:39576 1:N:0:CGATGT\nCGTGTTTTGTTGGCTTAGTTTTTGCTCTCATTGAGAGAAATAATATTGCTTTGCCATAGTAATTGAGTTTAACTACTGACACTTTCCATAGTCTAAAATTAATTGCTTTTAAGAAGAAATATTAGTTGAGGTTTCCAACGTTAGACCC\n+\n?@@DDDEFGFHFHIIGIJJJGHHIIJGIGGHEHEFBFHGGGIJIDDFGHIIJJJJIIEIFFEEGHEHFDFHJJJJJIHFEEHEDFEDEDEECCEDECCDDDCDDDDDDCDDCACACDACCDEDDCCDCCCCDDCCCCCC?AC??C@AA\n@HWI-D00360:5:H814YADXX:1:2209:15451:39625 1:N:0:CGATGT\nCGTTAGTTCATCAGCAATGGATCCAAACCAAGATGAAGTCTCTGATTTACCTGAAAAAGAAATCAGAAGGATAGTTATTAAGCTAATCAGGGAGAGACCAGAGAAAGTGAAAGCCCAATGCAAGGAAATCCAAAAACTGATATGAGAA\n+\nBCBFFFFFHHHHHJJJHJJJJJJJJJJJJJJJJJJJJJIIIJIJJJJJJJJJJJJJJIJJJJJJJJJJJJJJJHHHHHHHFFFFFFFEEEECDDDDDDDDDDDDDDDCDDEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDEDEDDD";
 
-</script>
-    
 
-<h1>FASTQE WebAssembly and Biowasm Example</h1>
 
-Use an Biowasm compatible Aioli object and create a CLI instance to process FASTQE commands, e.g.
+async function comparePerformance(gpuComputeFunction, wasmComputeFunction) {
+  // Step 1: Benchmark the GPU Compute Shader
 
-<pre>
-
-   &lt;script  src="https://biowasm.com/cdn/v3/aioli.js"&gt;&lt;/script&gt
-   &lt;script type="module"&gt;
-
-    
-    const CLI = await new Aioli([{tool: "fastqe",
+  const CLI = await new Aioli([{tool: "fastqe",
         program: "fastqe",         
-        urlPrefix: "https://fastqe.github.io/fastqe_rust_webgpu/",
+        urlPrefix: "https://fastqe.github.io/fastqe_rust/",
     }]);
+  const gpuStart = performance.now();
+  await   getGPUInfo();
+  const gpuEnd = performance.now();
+  const gpuTime = gpuEnd - gpuStart;
+  console.log(`GPU Compute Shader Time: ${gpuTime} ms`);
 
-     let output_help = await CLI.exec("fastqe --help");
-     document.getElementById("output_help").innerHTML = output_help;
+  // Step 2: Benchmark the CPU WASM Execution
+  const wasmStart = performance.now();
+  await CLI.exec("fastqe test.fq");
+    const wasmEnd = performance.now();
+  const wasmTime = wasmEnd - wasmStart;
+  console.log(`CPU WASM Execution Time: ${wasmTime} ms`);
 
-     &lt;/script&gt;
+  // Step 3: Compare the results
+  if (gpuTime < wasmTime) {
+    console.log(`GPU is faster by ${wasmTime - gpuTime} ms`);
+  } else {
+    console.log(`CPU (WASM) is faster by ${gpuTime - wasmTime} ms`);
+  }
+}
+
+// Example GPU compute function (replace with actual compute shader invocation)
+async function gpuComputeFunction() {
+  // Setup and execute GPU compute shader code here
+  // For example: creating buffers, running dispatch, and reading results.
+  await new Promise(resolve => setTimeout(resolve, 100)); // Simulate GPU delay
+}
+
+// Example WASM compute function (replace with actual WASM computation)
+function wasmComputeFunction() {
+  // Compile and execute the WASM code here
+  // Assuming that wasm computation is done synchronously
+  for (let i = 0; i < 1e7; i++) {} // Simulate CPU work
+}
+
+// Compare the performance
+comparePerformance(gpuComputeFunction, wasmComputeFunction);
 
 
-     &lt;h4&gt;Output of  &lt;code&gt;fastqe --help &lt;/code&gt;: &lt;/h4&gt;
-     &lt;pre id="output_help">Loading... &lt;/pre&gt;
+
+     </script>
+
+
+     <h4>Input sums and counts from  <code>fastqe </code>: </h4>
+     <pre id="output_help">Loading... </pre>
 
 
 
-</pre>
-
-<h4>Output of <code>fastqe test.fq</code>:</h4>
-<pre id="output">Loading...</pre>
-
-<h4>Output of <code>fastqe --help</code>:</h4>
-<pre id="output_help">Loading...</pre>
+     
+</body>
+</html>

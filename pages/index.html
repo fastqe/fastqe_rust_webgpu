@@ -242,7 +242,7 @@ console.log(fastqEmojiMap[1]); // Output: :bomb:
                     document.getElementById('gpu-info').textContent = 'No suitable GPU adapter found.';
                     return;
                 } else {
-			document.getElementById('gpu-info').textContent = adapter;
+			document.getElementById('gpu-info').textContent = JSON.stringify(adapter);
 		}
 		    
 
